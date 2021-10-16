@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://default_env3.tres" type="Environment" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends WorldEnvironment
+
+
+func _ready():
+	if OS.get_current_video_driver() == 1:
+		self.environment = load(\"res://default_env.tres\")
+	else:
+		self.environment = load(\"res://default_env3.tres\")
+"
+
+[node name="WorldEnvironment" type="WorldEnvironment"]
+environment = ExtResource( 1 )
+script = SubResource( 1 )

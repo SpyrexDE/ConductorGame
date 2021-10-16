@@ -1,0 +1,813 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Hall of the Mountain King.mp3" type="AudioStream" id=1]
+[ext_resource path="res://scenes/Toolbar.tscn" type="PackedScene" id=2]
+[ext_resource path="res://fonts/Dosis-SemiBold.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://assets/sectionBorder.png" type="Texture" id=4]
+[ext_resource path="res://scenes/Section.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/WorldEnvironment.tscn" type="PackedScene" id=6]
+[ext_resource path="res://assets/UI.png" type="Texture" id=7]
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends Node2D
+
+
+func _ready():
+	if Globals.use_camera:
+		$Camera2D.current = true
+	if !Globals.use_post_process:
+		$WorldEnvironment.queue_free()
+	
+	modulate.a = 0
+	$CanvasLayer/UI.modulate.a = 0
+	yield(get_tree().create_timer(1), \"timeout\")
+	$Tween.interpolate_property(self, \"modulate:a\", 0, 1, 2, Tween.TRANS_EXPO, Tween.EASE_OUT)
+	$Tween.interpolate_property($CanvasLayer/UI, \"modulate:a\", 0, 1, 2, Tween.TRANS_EXPO, Tween.EASE_OUT)
+	$Tween.start()
+	
+	yield(get_tree().create_timer(2), \"timeout\")
+	$Sections/you.request(-1)
+
+func start():
+	$AnimationPlayer.play(\"MountainKing\")
+
+func get_biggest_dist():
+	var dist = 0
+	for c in $Sections.get_children():
+		if !c.died && c.rb != null:
+			if c.is_conductor:
+				return 0
+			var d = c.realPos.distance_to(c.initialPos)
+			if c.realPos.distance_to(c.initialPos):
+				dist = d
+	return dist
+
+func get_biggest_dist_node():
+	var dist = 0
+	var dNode
+	for c in $Sections.get_children():
+		if !c.died && c.rb != null:
+			if c.is_conductor:
+				return $Sections/you
+			var d = c.realPos.distance_to(c.initialPos)
+			if c.realPos.distance_to(c.initialPos):
+				dist = d
+				dNode = c
+	return dNode
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	$Tween.interpolate_property(self, \"modulate:a\", 1, 0, 3, Tween.TRANS_EXPO, Tween.EASE_OUT)
+	$Tween.interpolate_property($CanvasLayer/UI, \"modulate:a\", 1, 0, 3, Tween.TRANS_EXPO, Tween.EASE_OUT)
+	$Tween.start()
+	yield(get_tree().create_timer(3.1), \"timeout\")
+	get_tree().change_scene(\"res://scenes/GameOver.tscn\")
+"
+
+[sub_resource type="Animation" id=6]
+length = 150.0
+tracks/0/type = "audio"
+tracks/0/path = NodePath("AudioStreamPlayer2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"clips": [ {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource( 1 )
+} ],
+"times": PoolRealArray( 0 )
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("Sections/Percussion")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 91.2, 126.5, 130.4, 134.4, 142.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 7 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+} ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath("Sections/Clarinets")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 61.8, 104.7 ),
+"transitions": PoolRealArray( 1, 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+} ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath("Sections/Tubas")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 102, 124.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"values": [ {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+} ]
+}
+tracks/4/type = "method"
+tracks/4/path = NodePath("Sections/Cellos")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 5.3, 16.9, 28.4, 38.3, 40.5, 79.5, 138.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ 1 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 1 ],
+"method": "request"
+}, {
+"args": [ 9 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+} ]
+}
+tracks/5/type = "method"
+tracks/5/path = NodePath("Sections/Double Basses")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 12.6, 19.4, 45, 70.4, 88.2, 97.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ 1 ],
+"method": "request"
+}, {
+"args": [ 9 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 8 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+} ]
+}
+tracks/6/type = "method"
+tracks/6/path = NodePath("Sections/Second Violins")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 54.5, 61.3, 70.7, 85.8, 92.7, 108.6, 124.1, 134.2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 9 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+}, {
+"args": [ 8 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 10 ],
+"method": "request"
+} ]
+}
+tracks/7/type = "method"
+tracks/7/path = NodePath("Sections/First Violins")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 64, 74.4, 85.6, 95.4, 99, 105.1, 112.6, 127.2, 135.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 4 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 5 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 5 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+} ]
+}
+tracks/8/type = "method"
+tracks/8/path = NodePath("Sections/Violas")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PoolRealArray( 35.2, 93.6, 120.1, 137, 140.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+}, {
+"args": [ 5 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+} ]
+}
+tracks/9/type = "method"
+tracks/9/path = NodePath("Sections/Flutes")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PoolRealArray( 54.2, 72.1, 108.3, 118, 131.2, 132.1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 5 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 8 ],
+"method": "request"
+} ]
+}
+tracks/10/type = "method"
+tracks/10/path = NodePath("Sections/Oboes")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/keys = {
+"times": PoolRealArray( 62.2, 67.4, 77.3, 90.3, 114.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 8 ],
+"method": "request"
+} ]
+}
+tracks/11/type = "method"
+tracks/11/path = NodePath("Sections/Bassons")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/keys = {
+"times": PoolRealArray( 17.2, 25.5, 46.8, 51.9, 103.8, 121.5, 130.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ 10 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 1 ],
+"method": "request"
+}, {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 7 ],
+"method": "request"
+}, {
+"args": [ 8 ],
+"method": "request"
+}, {
+"args": [ 7 ],
+"method": "request"
+} ]
+}
+tracks/12/type = "method"
+tracks/12/path = NodePath("Sections/Trombones")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/keys = {
+"times": PoolRealArray( 2.6, 66.8, 100.7, 123, 130.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ 6 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+}, {
+"args": [ 8 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+}, {
+"args": [ 7 ],
+"method": "request"
+} ]
+}
+tracks/13/type = "method"
+tracks/13/path = NodePath("Sections/Trumpets")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/keys = {
+"times": PoolRealArray( 115.8, 133.2, 139.3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"values": [ {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 10 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+} ]
+}
+tracks/14/type = "method"
+tracks/14/path = NodePath("Sections/French Horns")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/keys = {
+"times": PoolRealArray( 34.5, 78, 98.1, 110.4, 111.7, 136.6, 139.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 5 ],
+"method": "request"
+}, {
+"args": [ 0 ],
+"method": "request"
+}, {
+"args": [ 5 ],
+"method": "request"
+}, {
+"args": [ 2 ],
+"method": "request"
+} ]
+}
+tracks/15/type = "method"
+tracks/15/path = NodePath("Sections/you")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/keys = {
+"times": PoolRealArray( 144.8 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "request"
+} ]
+}
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends CanvasLayer
+
+
+func _ready():
+	Globals.cLayer = self
+"
+
+[sub_resource type="DynamicFont" id=4]
+size = 120
+use_filter = true
+font_data = ExtResource( 3 )
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends Label
+
+var oldVal = 0
+
+func _ready():
+	Globals.scoreLabel = self
+
+func setScore(val):
+	self.text = str(val)
+	$Tween.interpolate_property(self, \"rect_position:y\", 0, 10, 0.2, Tween.TRANS_BACK, Tween.EASE_OUT)
+	if oldVal >= val:
+		$Tween.interpolate_property(self, \"modulate:g\", 1, 0, 0.8, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+		$Tween.interpolate_property(self, \"modulate:b\", 1, 0, 0.8, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	else:
+		$Tween.interpolate_property(self, \"modulate:b\", 1, 0, 0.8, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+		$Tween.interpolate_property(self, \"modulate:r\", 1, 0, 0.8, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	$Tween.start()
+	oldVal = val
+
+
+func _on_Tween_tween_all_completed():
+	$Tween.interpolate_property(self, \"modulate\", modulate, Color.white, 0.8, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	$Tween.start()
+"
+
+[sub_resource type="GDScript" id=9]
+script/source = "extends Label
+
+
+var entered = false
+
+
+func _on_Area2D_mouse_entered():
+		entered = true
+		Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
+		modulate.a8 = 255
+
+
+func _on_Area2D_mouse_exited():
+		entered = false
+		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+		modulate.a8 = 220
+
+
+func _process(delta):
+	if Input.is_action_just_released(\"click\") && entered:
+		Globals.cLayer.get_parent().get_node(\"Tween\").interpolate_property(Globals.cLayer.get_parent(), \"modulate:a\", 1, 0, 2, Tween.TRANS_EXPO, Tween.EASE_OUT)
+		Globals.cLayer.get_parent().get_node(\"Tween\").interpolate_property(Globals.cLayer.get_parent().get_node(\"CanvasLayer/UI\"), \"modulate:a\", 1, 0, 2, Tween.TRANS_EXPO, Tween.EASE_OUT)
+		Globals.cLayer.get_parent().get_node(\"Tween\").start()
+		yield(get_tree().create_timer(2.1), \"timeout\")
+		get_tree().change_scene(\"res://scenes/Menu.tscn\")
+"
+
+[sub_resource type="RectangleShape2D" id=12]
+extents = Vector2( 124.632, 53.5607 )
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends Sprite
+
+
+var entered = false
+
+
+func _on_Area2D_mouse_entered():
+		entered = true
+		Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
+		modulate.a8 = 255
+
+
+func _on_Area2D_mouse_exited():
+		entered = false
+		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+		modulate.a8 = 220
+
+
+func _process(delta):
+	if Input.is_action_just_released(\"click\") && entered:
+		if OS.window_fullscreen:
+			OS.set_window_fullscreen(false)
+		else:
+			OS.set_window_fullscreen(true)
+"
+
+[sub_resource type="RectangleShape2D" id=11]
+extents = Vector2( 91.0764, 86.879 )
+
+[sub_resource type="GDScript" id=10]
+script/source = "extends Camera2D
+
+var desti = 1
+
+var initialPos
+
+func _ready():
+	initialPos = global_position
+
+func _process(delta):
+	if get_parent().get_biggest_dist() > 0:
+		desti = lerp(1, get_parent().get_biggest_dist() / 30, 0.008)
+		self.zoom.x = lerp(self.zoom.x, desti, 0.3)
+		self.zoom.y = lerp(self.zoom.y, desti, 0.3)
+		if get_parent().get_biggest_dist_node() != null:
+			self.global_position.x = lerp(Globals.conductor_node.realPos.x, get_parent().get_biggest_dist_node().realPos.x, 0.5)
+			self.global_position.y = lerp(Globals.conductor_node.realPos.y, get_parent().get_biggest_dist_node().realPos.y, 0.7)
+	else:
+		self.global_position = initialPos
+"
+
+[node name="Main" type="Node2D"]
+script = SubResource( 5 )
+
+[node name="WorldEnvironment" parent="." instance=ExtResource( 6 )]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 1 )
+bus = "New Bus"
+
+[node name="Sections" type="Node2D" parent="."]
+
+[node name="Percussion" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 511.341, 53.8395 )
+region_rect = Rect2( 41, 44, 589, 124 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Percussion"]
+
+[node name="Clarinets" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 438.592, 191.328 )
+region_rect = Rect2( 1014, 21, 423, 225 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Clarinets"]
+position = Vector2( -0.853027, -5.78401 )
+cast_to = Vector2( -25, -50 )
+
+[node name="Tubas" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 686.872, 175.977 )
+region_rect = Rect2( 749, 22, 203, 184 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Tubas"]
+position = Vector2( 2.58722, 1.77287 )
+cast_to = Vector2( 30, -50 )
+
+[node name="Cellos" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 648.162, 312.798 )
+region_rect = Rect2( 2004, 22, 508, 367 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Cellos"]
+position = Vector2( 14.1425, 32.7947 )
+cast_to = Vector2( 40, -25 )
+
+[node name="Double Basses" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 760.956, 294.111 )
+region_rect = Rect2( 712, 495, 277, 470 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Double Basses"]
+position = Vector2( 13.7184, 9.74878 )
+cast_to = Vector2( 60, -30 )
+
+[node name="Second Violins" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 353.162, 256.068 )
+region_rect = Rect2( 0, 416, 630, 530 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Second Violins"]
+position = Vector2( -3.51736, 15.9534 )
+cast_to = Vector2( -50, -50 )
+
+[node name="First Violins" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 330.47, 322.142 )
+region_rect = Rect2( 1765, 659, 667, 306 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/First Violins"]
+position = Vector2( -14.5955, 31.9082 )
+cast_to = Vector2( -80, -30 )
+
+[node name="you" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 508.671, 361.52 )
+region_rect = Rect2( 1278, 729, 212, 107 )
+is_conductor = true
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/you"]
+position = Vector2( -0.903809, 4.3472 )
+
+[node name="Violas" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 514.678, 307.459 )
+region_rect = Rect2( 2258, 416, 347, 180 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Violas"]
+position = Vector2( -4.43158, -11.4469 )
+cast_to = Vector2( 0, -50 )
+
+[node name="Flutes" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 458.614, 249.394 )
+region_rect = Rect2( 1083, 350, 284, 209 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Flutes"]
+position = Vector2( 3.08087, -2.74109 )
+cast_to = Vector2( -21.107, -50 )
+
+[node name="Oboes" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 577.415, 254.733 )
+region_rect = Rect2( 1501, 382, 296, 238 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Oboes"]
+position = Vector2( -6.66956, -5.31873 )
+cast_to = Vector2( 21.489, -50 )
+
+[node name="Bassons" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 615.458, 199.337 )
+region_rect = Rect2( 1479, 14, 452, 282 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Bassons"]
+position = Vector2( -4.89697, -7.09109 )
+cast_to = Vector2( 27.363, -50 )
+
+[node name="Trombones" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 590.096, 135.932 )
+region_rect = Rect2( 647, 219, 301, 164 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Trombones"]
+position = Vector2( 3.07141, -6.20444 )
+cast_to = Vector2( 16.044, -50 )
+
+[node name="Trumpets" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 465.956, 121.916 )
+region_rect = Rect2( 335, 191, 263, 110 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/Trumpets"]
+position = Vector2( 3.51605, 3.54568 )
+cast_to = Vector2( -9.125, -70 )
+
+[node name="French Horns" parent="Sections" instance=ExtResource( 5 )]
+position = Vector2( 366.511, 147.197 )
+region_rect = Rect2( 42, 191, 270, 190 )
+
+[node name="RayCast2D" type="RayCast2D" parent="Sections/French Horns"]
+position = Vector2( 2.68927, 2.65845 )
+cast_to = Vector2( -29.986, -50 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/MountainKing = SubResource( 6 )
+
+[node name="sectionBorder" type="Sprite" parent="."]
+light_mask = 2
+position = Vector2( 508.265, 207.146 )
+scale = Vector2( 0.918449, 0.918449 )
+texture = ExtResource( 4 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+script = SubResource( 7 )
+
+[node name="UI" type="Node2D" parent="CanvasLayer"]
+
+[node name="Toolbar" parent="CanvasLayer/UI" instance=ExtResource( 2 )]
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/UI"]
+margin_left = 19.0
+margin_top = 5.0
+margin_right = 117.0
+margin_bottom = 158.0
+rect_scale = Vector2( 0.6, 0.6 )
+custom_fonts/font = SubResource( 4 )
+text = "0"
+script = SubResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="CanvasLayer/UI/ScoreLabel"]
+
+[node name="Label" type="Label" parent="CanvasLayer/UI"]
+margin_left = 859.549
+margin_top = 15.5946
+margin_right = 1122.55
+margin_bottom = 168.595
+rect_scale = Vector2( 0.3, 0.3 )
+custom_fonts/font = SubResource( 4 )
+text = "Menu"
+align = 2
+script = SubResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false,
+"_editor_description_": ""
+}
+
+[node name="Area2D" type="Area2D" parent="CanvasLayer/UI/Label"]
+position = Vector2( 133.333, 86.6667 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CanvasLayer/UI/Label/Area2D"]
+position = Vector2( 0, -0.661407 )
+shape = SubResource( 12 )
+
+[node name="Sprite" type="Sprite" parent="CanvasLayer/UI"]
+position = Vector2( 989.539, 42.0534 )
+scale = Vector2( 0.2656, 0.2656 )
+texture = ExtResource( 7 )
+region_enabled = true
+region_rect = Rect2( 614, 20, 176, 178 )
+script = SubResource( 13 )
+
+[node name="Area2D" type="Area2D" parent="CanvasLayer/UI/Sprite"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CanvasLayer/UI/Sprite/Area2D"]
+shape = SubResource( 11 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 512.548, 302.005 )
+smoothing_enabled = true
+smoothing_speed = 0.0
+script = SubResource( 10 )
+
+[node name="Tween" type="Tween" parent="."]
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
+[connection signal="tween_all_completed" from="CanvasLayer/UI/ScoreLabel/Tween" to="CanvasLayer/UI/ScoreLabel" method="_on_Tween_tween_all_completed"]
+[connection signal="mouse_entered" from="CanvasLayer/UI/Label/Area2D" to="CanvasLayer/UI/Label" method="_on_Area2D_mouse_entered"]
+[connection signal="mouse_exited" from="CanvasLayer/UI/Label/Area2D" to="CanvasLayer/UI/Label" method="_on_Area2D_mouse_exited"]
+[connection signal="mouse_entered" from="CanvasLayer/UI/Sprite/Area2D" to="CanvasLayer/UI/Sprite" method="_on_Area2D_mouse_entered"]
+[connection signal="mouse_exited" from="CanvasLayer/UI/Sprite/Area2D" to="CanvasLayer/UI/Sprite" method="_on_Area2D_mouse_exited"]

@@ -1,0 +1,53 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://fonts/Dosis-SemiBold.ttf" type="DynamicFontData" id=1]
+
+[sub_resource type="DynamicFont" id=1]
+size = 60
+use_filter = true
+font_data = ExtResource( 1 )
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Label
+
+var close = false
+
+func _ready():
+	$Tween.interpolate_property(self, \"rect_scale\", Vector2(0.5, 0.5), Vector2(1, 1), 0.5, Tween.TRANS_BOUNCE, Tween.EASE_OUT)
+	$Tween.interpolate_property(self, \"modulate:a\", 0, 1, 0.5, Tween.TRANS_SINE, Tween.EASE_OUT)
+	$Tween.start()
+
+
+func setText(text):
+	self.text = text
+
+func _on_Tween_tween_all_completed():
+	if close:
+		self.queue_free()
+		return
+	close = true
+	$Tween.interpolate_property(self, \"rect_scale\", Vector2(1, 1), Vector2(0.5, 0.5), 0.5, Tween.TRANS_BOUNCE, Tween.EASE_OUT)
+	$Tween.interpolate_property(self, \"modulate:a\", 1, 0, 0.5, Tween.TRANS_SINE, Tween.EASE_OUT)
+	$Tween.start()
+"
+
+[node name="OverlayLabel" type="Label"]
+modulate = Color( 1, 0.137255, 0.137255, 1 )
+anchor_top = -0.002
+anchor_bottom = -0.002
+margin_left = -129.469
+margin_top = -38.4211
+margin_right = 145.531
+margin_bottom = 38.5789
+rect_pivot_offset = Vector2( 129.474, 38.1705 )
+custom_fonts/font = SubResource( 1 )
+text = "MISSED (-1)"
+uppercase = true
+script = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="."]
+
+[connection signal="tween_all_completed" from="Tween" to="." method="_on_Tween_tween_all_completed"]

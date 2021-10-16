@@ -1,0 +1,103 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://assets/UI.png" type="Texture" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+signal pressed
+
+var entered = false
+
+func _process(delta):
+	if entered:
+		if Input.is_action_just_pressed(\"click\"):
+			$AnimationPlayer.play(\"down\")
+		elif Input.is_action_just_released(\"click\"):
+			$AnimationPlayer.play(\"up\")
+			emit_signal(\"pressed\")
+
+
+func _on_Area2D_mouse_entered():
+	entered = true
+	Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
+
+
+func _on_Area2D_mouse_exited():
+	entered = false
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	if anim_name == \"up\":
+		get_tree().change_scene(\"res://scenes/Main.tscn\")
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 69.9508, 28.2116 )
+
+[sub_resource type="Animation" id=3]
+length = 0.3
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3 ),
+"transitions": PoolRealArray( 0.138696, 0.15932 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 0.9, 0.9 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+length = 0.4
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 0.233258, 0.153893 ),
+"update": 0,
+"values": [ Vector2( 0.9, 0.9 ), Vector2( 1, 1 ) ]
+}
+
+[node name="StartButton" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( -0.0799789, -0.0269909 )
+scale = Vector2( 0.80251, 0.80251 )
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 513, 18, 276, 107 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Area2D" type="Area2D" parent="Sprite"]
+position = Vector2( 0, -2.5 )
+scale = Vector2( 1.64397, 1.64397 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/Area2D"]
+shape = SubResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/down = SubResource( 3 )
+anims/up = SubResource( 4 )
+
+[connection signal="mouse_entered" from="Sprite/Area2D" to="." method="_on_Area2D_mouse_entered"]
+[connection signal="mouse_exited" from="Sprite/Area2D" to="." method="_on_Area2D_mouse_exited"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

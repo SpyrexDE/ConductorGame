@@ -1,0 +1,161 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://assets/UI.png" type="Texture" id=1]
+[ext_resource path="res://scenes/ButtonOk.tscn" type="PackedScene" id=2]
+[ext_resource path="res://shaders/blur_mat.tres" type="Material" id=3]
+[ext_resource path="res://fonts/Dosis-SemiBold.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://assets/masks/MaskLight.png" type="Texture" id=5]
+[ext_resource path="res://assets/items/decresc.png" type="Texture" id=6]
+[ext_resource path="res://fonts/Dosis-Bold.ttf" type="DynamicFontData" id=7]
+[ext_resource path="res://scenes/Checkbox.tscn" type="PackedScene" id=8]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var will_close = false
+
+func _ready():
+	if OS.get_current_video_driver() != 1:
+		$NinePatchRect.show()
+		$NinePatchRect2.hide()
+	else:
+		$ColorRect.queue_free()
+	
+	$Light2D.scale.x = $ColorRect.rect_size.x * 0.008
+	
+	$Tween.interpolate_property(self, \"scale\", Vector2(0.2, 0.2), Vector2(1, 1), 0.5, Tween.TRANS_ELASTIC, Tween.EASE_OUT)
+	$Tween.interpolate_property(self, \"modulate:a\", 0, 1, 0.2, Tween.TRANS_QUART, Tween.EASE_OUT)
+	$Tween.start()
+	
+	get_tree().paused = true
+
+func setItem(itemID : int):
+	$RichTextLabel.bbcode_text = \"[center][b]\" + Globals.ITEM_DESC_TITLES[itemID] + \"[/b]\\n\" + Globals.ITEM_DESC[itemID] + \"[/center]\"
+	$Image.texture = Globals.ITEMS[itemID]
+	$Light2D.scale.x = $ColorRect.rect_size.x * 0.008
+
+
+func _on_Button_pressed():
+	if $Checkbox.checked:
+		Globals.show_tutorial = false
+	will_close = true
+	$Tween.interpolate_property(self, \"scale\", Vector2(1, 1), Vector2(0.5, 0.5), 0.8, Tween.TRANS_SINE, Tween.EASE_OUT)
+	$Tween.interpolate_property(self, \"modulate:a\", 1, 0, 0.3, Tween.TRANS_QUART, Tween.EASE_OUT)
+	$Tween.start()
+
+
+func _on_Tween_tween_all_completed():
+	if will_close:
+		get_tree().paused = false
+		self.queue_free()
+"
+
+[sub_resource type="DynamicFont" id=2]
+size = 70
+font_data = ExtResource( 7 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 60
+use_mipmaps = true
+use_filter = true
+extra_spacing_bottom = -10
+font_data = ExtResource( 4 )
+
+[node name="TutorialWindow" type="Node2D"]
+pause_mode = 2
+z_index = 200
+script = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = ExtResource( 3 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -293.0
+margin_top = -208.0
+margin_right = 294.0
+margin_bottom = 207.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -306.0
+margin_top = -219.0
+margin_right = 306.0
+margin_bottom = 219.0
+texture = ExtResource( 1 )
+region_rect = Rect2( 24, 352, 252, 228 )
+patch_margin_left = 126
+patch_margin_top = 113
+patch_margin_right = 126
+patch_margin_bottom = 115
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -306.0
+margin_top = -219.0
+margin_right = 306.0
+margin_bottom = 219.0
+texture = ExtResource( 1 )
+region_rect = Rect2( 306, 134, 252, 228 )
+patch_margin_left = 126
+patch_margin_top = 113
+patch_margin_right = 126
+patch_margin_bottom = 115
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" parent="." instance=ExtResource( 2 )]
+position = Vector2( 231.315, 161.613 )
+
+[node name="Light2D" type="Light2D" parent="."]
+position = Vector2( -146.781, -76.2252 )
+texture = ExtResource( 5 )
+energy = 0.6
+
+[node name="Image" type="Sprite" parent="."]
+position = Vector2( -146.834, -78.6611 )
+scale = Vector2( 0.348237, 0.348237 )
+texture = ExtResource( 6 )
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+margin_left = 7.0
+margin_top = -158.0
+margin_right = 546.0
+margin_bottom = 369.0
+rect_scale = Vector2( 0.5, 0.5 )
+custom_fonts/bold_font = SubResource( 2 )
+custom_fonts/normal_font = SubResource( 3 )
+bbcode_enabled = true
+bbcode_text = "[center][b]Decrescendo[/b]
+translates as \"decreasing\" and is used to signal to the musicians to decrease their volume over time[/center]"
+text = "Decrescendo
+translates as \"decreasing\" and is used to signal to the musicians to decrease their volume over time"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="Checkbox" parent="." instance=ExtResource( 8 )]
+position = Vector2( -240.83, 160.832 )
+scale = Vector2( 0.6, 0.6 )
+text = "Hide tutorials"
+
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
+[connection signal="tween_all_completed" from="Tween" to="." method="_on_Tween_tween_all_completed"]

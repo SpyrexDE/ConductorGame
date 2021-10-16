@@ -1,0 +1,54 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/UI.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends NinePatchRect
+
+onready var Item = preload(\"res://scenes/Item.tscn\")
+
+var destinations = []
+
+func _ready():
+	Globals.toolbar_node = self
+
+func add_item(id):
+	var i = Item.instance()
+	self.add_child(i)
+	i.item_id = id
+	i.global_position.y = self.rect_global_position.y + self.rect_size.y / 4
+	i.global_position.x = -100
+	destinations.append(-100)
+	yield(get_tree().create_timer(0.1), \"timeout\")
+	resort()
+
+func resort():
+	for i in get_child_count():
+		destinations[i] = self.rect_size.x * (i+1) / (get_child_count() + 1)
+
+func _process(delta):
+	var c = 0
+	for i in get_children():
+		if Globals.draggingItem != i:
+			i.global_position.x = lerp(i.global_position.x, (self.rect_global_position.x + destinations[c]) / 1.8, 0.1) - 2
+			i.global_position.y = lerp(i.global_position.y, self.rect_global_position.y + self.rect_size.y / 4, 0.1)
+			i.setScale(Vector2(1,1) / lerp(1, get_child_count()*2, 0.03))
+		c += 1
+"
+
+[node name="Toolbar" type="NinePatchRect"]
+margin_left = 72.0908
+margin_top = 425.545
+margin_right = 1828.09
+margin_bottom = 712.545
+rect_scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 1 )
+region_rect = Rect2( 18, 6, 184, 184 )
+patch_margin_left = 92
+patch_margin_top = 92
+patch_margin_right = 92
+patch_margin_bottom = 92
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

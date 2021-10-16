@@ -1,0 +1,173 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://fonts/Dosis-Bold.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://scenes/Checkbox.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/TitleScreen.png" type="Texture" id=3]
+[ext_resource path="res://fonts/Dosis-SemiBold.ttf" type="DynamicFontData" id=4]
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends Node2D
+
+var close = false
+
+func _ready():
+	self.modulate.a = 0
+	yield(get_tree().create_timer(1), \"timeout\")
+	$Tween.interpolate_property(self, \"modulate:a\", 0, 1, 0.8, Tween.TRANS_EXPO, Tween.EASE_OUT)
+	$Tween.start()
+	$Label3.text = \"Godot Engine V. \" + Engine.get_version_info().string
+
+
+
+func _on_Button_pressed():
+	$Tween.interpolate_property(self, \"modulate:a\", 1, 0, 0.8, Tween.TRANS_EXPO, Tween.EASE_OUT)
+	$Tween.start()
+	close = true
+
+
+func _on_Tween_tween_all_completed():
+	if close:
+		Globals.show_tutorial = $Checkbox.checked
+		Globals.use_post_process = $Checkbox2.checked
+		Globals.use_camera = $Checkbox3.checked
+		Globals.reset()
+		get_tree().change_scene(\"res://scenes/Main.tscn\")
+"
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 1, 1, 1, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.690196, 0.72549, 1, 1 )
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 1, 1, 1, 0.792157 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.690196, 0.72549, 1, 1 )
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="StyleBoxEmpty" id=4]
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="DynamicFont" id=5]
+size = 60
+use_filter = true
+extra_spacing_top = -10
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 100
+use_filter = true
+font_data = ExtResource( 4 )
+
+[node name="Menu" type="Node2D"]
+script = SubResource( 7 )
+
+[node name="TitleScreen" type="Sprite" parent="."]
+position = Vector2( 511.474, 299.815 )
+scale = Vector2( 0.335915, 0.334335 )
+texture = ExtResource( 3 )
+
+[node name="Checkbox" parent="." instance=ExtResource( 2 )]
+position = Vector2( 75.9991, 100.8 )
+scale = Vector2( 0.4, 0.4 )
+text = "Show tutorial windows"
+checked = true
+
+[node name="Checkbox2" parent="." instance=ExtResource( 2 )]
+position = Vector2( 75.999, 150 )
+scale = Vector2( 0.4, 0.4 )
+text = "Post processing"
+checked = true
+
+[node name="Checkbox3" parent="." instance=ExtResource( 2 )]
+position = Vector2( 75.999, 198.015 )
+scale = Vector2( 0.4, 0.4 )
+text = "Camera movement (experimental)"
+
+[node name="Checkbox4" parent="." instance=ExtResource( 2 )]
+position = Vector2( 75.2499, 331.826 )
+scale = Vector2( 0.4, 0.4 )
+text = "In the Hall of the Mountain King by Edvard Grieg"
+checked = true
+disabled = true
+
+[node name="Button" type="Button" parent="."]
+margin_left = 60.0
+margin_top = 469.0
+margin_right = 282.0
+margin_bottom = 560.0
+mouse_default_cursor_shape = 2
+custom_styles/hover = SubResource( 1 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/normal = SubResource( 2 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color_disabled = Color( 0.690196, 0.72549, 1, 1 )
+custom_colors/font_color = Color( 0.690196, 0.72549, 1, 1 )
+custom_colors/font_color_hover = Color( 0.690196, 0.72549, 1, 1 )
+custom_colors/font_color_pressed = Color( 0.690196, 0.72549, 1, 1 )
+text = "Play"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_left = 60.0
+margin_top = 15.732
+margin_right = 393.0
+margin_bottom = 142.732
+rect_scale = Vector2( 0.5, 0.5 )
+custom_fonts/font = SubResource( 6 )
+text = "Settings"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="."]
+margin_left = 60.0
+margin_top = 240.044
+margin_right = 537.0
+margin_bottom = 367.044
+rect_scale = Vector2( 0.5, 0.5 )
+custom_fonts/font = SubResource( 6 )
+text = "Level select"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="Label" parent="."]
+margin_left = 13.0
+margin_top = 569.0
+margin_right = 5045.0
+margin_bottom = 696.0
+rect_scale = Vector2( 0.2, 0.2 )
+custom_fonts/font = SubResource( 6 )
+text = "V. 1.0"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="."]
+
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
+[connection signal="tween_all_completed" from="Tween" to="." method="_on_Tween_tween_all_completed"]

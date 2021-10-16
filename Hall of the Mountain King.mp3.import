@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Hall of the Mountain King.mp3-a2b889272707da8945e8509d17c40673.mp3str"
+
+[deps]
+
+source_file="res://Hall of the Mountain King.mp3"
+dest_files=[ "res://.import/Hall of the Mountain King.mp3-a2b889272707da8945e8509d17c40673.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

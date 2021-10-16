@@ -1,0 +1,125 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/sections_splitted.png" type="Texture" id=1]
+[ext_resource path="res://scenes/BorderMask.tscn" type="PackedScene" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Sprite
+
+export var is_conductor = false
+
+onready var RBubble = preload(\"res://scenes/RequestBubble.tscn\")
+
+var initialPos : Vector2
+var realPos : Vector2
+
+const speed = 0.1
+var vel = Vector2.ZERO
+var destination = Vector2.ZERO
+
+var struggleScore = 0
+
+
+var rb
+var sent = false
+var died = false
+
+func _ready():
+	if is_conductor:
+		Globals.conductor_node = self
+	initialPos = position
+	realPos = position
+	destination = position
+
+func _process(delta):
+	if !died:
+		if !is_conductor:
+			realPos += $RayCast2D.cast_to.clamped(1) * struggleScore/10
+		if(struggleScore > 1):
+			wabble()
+		
+		destination += vel
+		vel /= 1.5
+		global_position = lerp(global_position, destination, 0.1)
+		
+		checkForGameOver()
+
+func wabble():
+	var dif1 = abs(realPos.x - position.x)/2 + 1 + rand_range(-5, 5)
+	if realPos.x - position.x < 0:
+		vel -= Vector2(speed * dif1, 0)
+	else:
+		vel += Vector2(speed * dif1, 0)
+	
+	var dif2 = abs(realPos.y - position.y)/2 + 1 + rand_range(-5, 5)
+	if realPos.y - position.y < 0:
+		vel -= Vector2(0, speed * dif2)
+	else:
+		vel += Vector2(0, speed * dif2)
+
+
+func _on_Timer_timeout():
+	if !died:
+		wabble()
+
+func request(itemID : int):
+	if !died:
+		if rb != null:
+			rb.queue_free()
+			rb = null
+			Globals.score =- 1
+			Globals.send_overlay(\"MISSED (-1)\", global_position + Vector2(0, 10))
+		rb = RBubble.instance()
+		self.add_child(rb)
+		rb.reqItem = itemID
+		$StruggleTimer.start()
+
+func cancelStruggle():
+	if !died:
+		if is_conductor:
+			get_parent().get_parent().start()
+		struggleScore = 0
+		$StruggleTimer.stop()
+		$WabbleTimer.wait_time = 0.3
+		realPos = initialPos
+		rb = null
+
+func _on_StruggleTimer_timeout():
+	if !died:
+		struggleScore += 1
+		$WabbleTimer.wait_time *= 0.02
+
+func checkForGameOver():
+	if Globals.conductor_node != null && !sent && !died:
+		if Globals.conductor_node.global_position.distance_to(self.global_position) > 420:
+			sent = true
+			$Tween.interpolate_property(self, \"scale\", scale, Vector2.ZERO, 0.6, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+			$Tween.interpolate_property(self, \"modulate:a\", 1, 0, 0.4, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+			$Tween.start()
+			$BorderMask.hide()
+			Globals.score -= 2
+			Globals.send_overlay(\"LOST (-2)\", global_position + Vector2(0, 10))
+			died = true
+"
+
+[node name="Section" type="Sprite"]
+scale = Vector2( 0.377, 0.377 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_filter_clip = true
+script = SubResource( 1 )
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="WabbleTimer" type="Timer" parent="."]
+wait_time = 0.3
+autostart = true
+
+[node name="StruggleTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="BorderMask" parent="." instance=ExtResource( 2 )]
+scale = Vector2( 6, 6 )
+
+[connection signal="timeout" from="WabbleTimer" to="." method="_on_Timer_timeout"]
+[connection signal="timeout" from="StruggleTimer" to="." method="_on_StruggleTimer_timeout"]
