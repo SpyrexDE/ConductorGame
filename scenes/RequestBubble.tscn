@@ -27,7 +27,8 @@ func _on_Area2D_mouse_entered():
 	entered = true
 	if Globals.draggingItem == null:
 		return
-	Globals.draggingItem.snapTo(self)
+	if Globals.draggingItem.item_id == reqItem:
+		Globals.draggingItem.snapTo(self)
 
 
 func _on_Area2D_mouse_exited():
@@ -40,6 +41,7 @@ func _on_Area2D_mouse_exited():
 func _input(event):
 	if Input.is_action_just_released(\"click\"):
 		if Globals.draggingItem != null && entered:
+			if Globals.draggingItem.item_id == reqItem:
 				var item_id = Globals.draggingItem.item_id
 				Globals.draggingItem.queue_free()
 				Globals.draggingItem = null
@@ -101,7 +103,7 @@ tracks/2/keys = {
 }
 
 [node name="RequestBubble" type="Node2D"]
-scale = Vector2( 1e-05, 1e-05 )
+scale = Vector2( 0.25, 0.25 )
 z_index = 99
 script = SubResource( 1 )
 

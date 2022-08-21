@@ -61,6 +61,12 @@ use_filter = true
 extra_spacing_top = -20
 font_data = ExtResource( 3 )
 
+[sub_resource type="DynamicFont" id=5]
+size = 60
+use_filter = true
+extra_spacing_top = -10
+font_data = ExtResource( 4 )
+
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 1, 1, 1, 1 )
 border_width_left = 2
@@ -93,12 +99,6 @@ corner_radius_top_left = 25
 corner_radius_top_right = 25
 corner_radius_bottom_right = 25
 corner_radius_bottom_left = 25
-
-[sub_resource type="DynamicFont" id=5]
-size = 60
-use_filter = true
-extra_spacing_top = -10
-font_data = ExtResource( 4 )
 
 [node name="GameOver" type="Node2D"]
 script = SubResource( 7 )
@@ -163,15 +163,15 @@ margin_top = 469.0
 margin_right = 282.0
 margin_bottom = 560.0
 mouse_default_cursor_shape = 2
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 3 )
-custom_styles/focus = SubResource( 4 )
-custom_styles/normal = SubResource( 2 )
-custom_fonts/font = SubResource( 5 )
 custom_colors/font_color_disabled = Color( 0.690196, 0.72549, 1, 1 )
 custom_colors/font_color = Color( 0.690196, 0.72549, 1, 1 )
 custom_colors/font_color_hover = Color( 0.690196, 0.72549, 1, 1 )
 custom_colors/font_color_pressed = Color( 0.690196, 0.72549, 1, 1 )
+custom_fonts/font = SubResource( 5 )
+custom_styles/hover = SubResource( 1 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/normal = SubResource( 2 )
 text = "Menu"
 __meta__ = {
 "_edit_use_anchors_": false,
