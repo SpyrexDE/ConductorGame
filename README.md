@@ -8,7 +8,8 @@
 
 <p align="center">
 	<samp>Conductor is a game made for the GMTK Jam 2021
-	using the Godot game engine.</samp>
+	using the Godot game engine.</samp><br>
+	<a href="https://www.youtube.com/watch?v=78vAlFQlHYY">Watch gameplay on Youtube</a>
 	<p align="center" style="margin-bottom: 0px;">
 		<a href="https://spyrex.itch.io/conductor">
 			<img src="assets/Banner.png" height=150></img>
